@@ -19,6 +19,6 @@ bookmarks:
     "user_id": "it will be a foreign key from users table",
     "excerpt": "it will contains short description from article",
     "sort_id": "numeric id to show the acticle position",
-    "source": desktop, api, ext_header, ext_toolbar,"
+    "source": desktop, api, ext_header, ext_toolbar,",
 }
 
