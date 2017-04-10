@@ -1,0 +1,59 @@
+{
+    "version": "0.0.1",
+    "manifest_version": 2,
+    "description": "Clipsack helps you to manage your bookmarks, clipboard, videos, images and many more things", 
+    "homepage_url": "http://www.clipsack.com",
+    "default_locale": "en", 
+    "background": {
+        "persistent": true,
+        "scripts": [
+            "js/jquery/jquery.min.js",
+            "js/utils/utils.js",
+            "src/bg/background.js"
+        ]
+    },
+    "name": "Clipsack : My reading assistance",
+    "options_page": "src/options_custom/index.html",
+    "browser_action": {
+        "default_icon": "icons/icon19.png",
+        "default_title": "Clipsack" 
+    },
+    "permissions": [
+        "bookmarks",
+        "contextMenus",
+        "cookies",
+        "idle",
+        "notifications",
+        "tabs",
+        "http://*/*",
+        "https://*/*",
+        "storage"
+    ],
+    "omnibox": {
+        "keyword": "clipsack"
+    },
+    "content_scripts": [{
+        "matches": [
+            "*://*/*"
+        ],
+        "css": [
+            "src/inject/css/inject.css"
+        ],
+        "js": [
+            "js/jquery/jquery.min.js", "src/inject/js/inject.js", "js/utils/utils.js", "src/inject/js/content.js", "src/inject/js/readtime.js"
+        ],
+        "run_at": "document_end"
+    }]
+    ,
+    "web_accessible_resources": [
+        "src/inject/html/inject.html",
+        "src/inject/html/readtime.html"
+    ],
+     "icons": {
+        "16": "icons/icon16.png",
+        "19": "icons/icon19.png",
+        "64": "icons/icon64.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    }
+}

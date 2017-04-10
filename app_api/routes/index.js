@@ -2,12 +2,14 @@ var express = require('express');
 var router = express.Router();
 var readTime = require('../controllers/readtime');
 
-router.get('/readtime/:json', readTime.getReadTime);
+// readtime routers 
+router.get('/readtime/:userId/:url', readTime.getReadTime); // to get the article readtime
+//router.post('/readtime/:articleId', readTime.saveReadTime); // After article finish it will save the complete reading time of a user
+
 
 /* GET home page. */
-
 router.get('/', function(req, res) {
-    res.json({ message: 'hooray! welcome to our api!' });   
+    res.json({ message: 'Hooray! You got the access to readtime!' });   
 });
 
 
