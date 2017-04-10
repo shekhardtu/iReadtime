@@ -9,7 +9,7 @@ if (process.env.NODE_ENV === 'production') {
   dbURI = 'mongodb://localhost/clipsack';
 }
 mongoose.connect(dbURI);
-console.log(process.env.NODE_ENV);
+
 mongoose.connection.on('connected', function () {
   console.log('Mongoose connected to ' + dbURI);
 });

@@ -1,12 +1,14 @@
 var mongoose = require('mongoose');
-//var readtime = mongoose.model('readtime');
+var user = mongoose.model('User');
+var readtime = mongoose.model('Readtime');
 
 module.exports.getReadTime = function (req, res) {
-    if (req.params && req.params) {
-        console.log(req.params.location);
-        console.log('received data');
-    }
-    sendJsonResponse(res, 200, {'status': 'success'})
+    console.log(req);
+    
+    //console.log(loc);
+    var loc = req.query.location;
+   
+    sendJsonResponse(res, 200, loc)
 };
 
 var sendJsonResponse = function(res, status, content) {
