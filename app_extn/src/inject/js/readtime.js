@@ -3,131 +3,54 @@
 Each function will return an object 
 Which will basically contains more than two parameters
 {
-    stts: true or false // It will if the output is expected or not. Basically success flag. @return BOOLEAN
-    msg: readable contextual message or reason for status. @return STRING
+    status: true or false // It will if the output is expected or not. Basically success flag. @return BOOLEAN
+    message: readable contextual message or reason for status. @return STRING
 }
 
 
 /* [1] It helps us to find the selector; 
 Algo: search on page for specific element paired with website or 'article' tag for reading content */
 
-var readtime = {
-    data: {
-
-    }
+function readtime(avgReadingTime) {
+    this.avgReadingSpeed = "";
 }
-var articleSelector = (function () {
-    var host = location.host,
-        selector = false;
-    if (host.indexOf("www.") != -1)
-        host = host.substring(4);
-    
-    var websiteArticleTagPair = [{
-        "website": "reddit.com",
-        "selector": ".entry"
-    }, {
-        "website": "css-tricks.com",
-        "selector": ".article-content"
-    }, {
-        "website": "medium.com",
-        "selector": ".postArticle-content"
-    }, {
-        "website": "ndtv.com",
-        "selector": "#ins_storybody"
-    }, {
-        "website": "bbc.com",
-        "selector": ".story-body"
-    }, {
-        "website": "en.wikipedia.org",
-        "selector": "#bodyContent"
-    }, {
-        "website": "scientificamerican.com",
-        "selector": ".article-text"
-    }, {
-        "website": "america.aljazeera.com",
-        "selector": ".articleOpinion-mainPar--container"
-    }, {
-        "website": "sparknotes.com",
-        "selector": ".studyGuideText"
-    }, {
-        "website": "shmoop.com",
-        "selector": ".content-learning-guide"
-    }, {
-        "website": "motherjones.com",
-        "selector": ".content"
-    }, {
-        "website": "fortune.com",
-        "selector": ".article-bottom"
-    }, {
-        "website": "getpocket.com",
-        "selector": ".reader_content"
-    }, {
-        "website": "businessinsider.com",
-        "selector": ".sl-layout-post"
-    }, {
-        "website": "makeuseof.com",
-        "selector": ".entry"
-    }, {
-        "website": "lifehack.org",
-        "selector": ".post-content"
-    }, {
-        "website": "geek.com",
-        "selector": ".articleinfo"
-    }, {
-        "website": "cleveland.com",
-        "selector": ".entry-content"
-    }, {
-        "website": "oregonlive.com",
-        "selector": "#article_container"
-    }, {
-        "website": "nj.com",
-        "selector": "#article_container"
-    }, {
-        "website": "nola.com",
-        "selector": "#article_container"
-    }, {
-        "website": "al.com",
-        "selector": "#article_container"
-    }, {
-        "website": "masslive.com",
-        "selector": "#article_container"
-    }, {
-        "website": "gulflive.com",
-        "selector": "#article_container"
-    }, {
-        "website": "mlive.com",
-        "selector": "#article_container"
-    }, {
-        "website": "mardigras.com",
-        "selector": "#article_container"
-    }, {
-        "website": "syracuse.com",
-        "selector": "#article_container"
-    }, {
-        "website": "reuters.com",
-        "selector": "#articleText"
-    }, {
-        "website": "nymag.com",
-        "selector": ".body"
-    }, {
-        "website": "www.vulture.com",
-        "selector": "#article"
-    }]
 
+getReadTimePopout(null, 275);
 
-    for (var i = 0; i < websiteArticleTagPair.length; i++) {
-        if (host.indexOf(websiteArticleTagPair[i].website) != -1) {;
-            selector = websiteArticleTagPair[i].selector;
-            break;
+function readingContent(location) {
+    var isValid = (function () {
+        var href = location.href,
+            host = location.host;
+        if (host.indexOf("www.") != -1)
+            host = host.substring(4);
+        var stopWebsite = ['glassdoor.co.in', 'glassdoor.com'];
+
+        if (/blog/.test(href)) {
+            return true;
+        } else if (stopWebsite.indexOf(host) != -1) {
+            return false;
+        } else if (window.location.pathname === "/") {
+            return false;
+        } else {
+            return true;
         }
+    })(location);
 
+    if (!isValid) {
+        return false;
     }
-    return selector ? selector : "article";
-})();
-
-
-/* [2] Assigning the dom value */
-var readingContent = getDomNode(articleSelector);
+    var loc = document.location;
+    var uri = {
+        spec: loc.href,
+        host: loc.host,
+        prePath: loc.protocol + "//" + loc.host,
+        scheme: loc.protocol.substr(0, loc.protocol.indexOf(":")),
+        pathBase: loc.protocol + "//" + loc.host + loc.pathname.substr(0, loc.pathname.lastIndexOf("/") + 1)
+    };
+    var documentClone = document.cloneNode(true);
+    var article = new Readability(uri, documentClone).parse();
+    return article;
+}
 
 /* [2.1.1] After getting selector, it tells us if that selector is class, id or simply sytactical tag */
 function classTagOrID(selector) {
@@ -160,8 +83,6 @@ function getDomNode(selector) {
     }
 }
 
-
-
 function getText(elem) {
     return (function () {
         var text = "";
@@ -188,30 +109,30 @@ function getText(elem) {
     })(elem)
 }
 
-
 function domParser(elementNode) {
     if (!elementNode) {
         return {
             status: false,
-            message: "This is page is applicable for readtime"
+            message: "This page is not applicable for readtime"
         }
     }
-    var text = getText(elementNode),
-        imageCount = isImage(elementNode),
+    var text = elementNode.vendor.textContent,
+        imageCount = elementNode.vendor.imageCount,
         videoCount = isVideo(elementNode),
         codeBlockCount = isCode(elementNode);
+    node = elementNode.vendor.content
 
     var domInfo = {
         text: text,
-        dom_node: elementNode,
+        domNode: node,
         wordCount: getWordCount(text).wordCount,
-        is_image: imageCount,
-        is_video: videoCount,
-        is_code: codeBlockCount
+        isImage: imageCount,
+        isVideo: videoCount,
+        isCode: codeBlockCount
     };
 
     domInfo.status = true;
-    domInfo.msg = "It contains";
+    domInfo.message = "It contains";
     return domInfo;
 
 }
@@ -229,7 +150,7 @@ function isVideo(elementNode) {
     return $(elementNode).find("video").length || 0;
 }
 
-function imageViewTime(imageCount) {
+function imageScanTime(imageCount) {
     var images = parseInt(imageCount),
         viewTime = 0,
         radicalValue = 0;
@@ -278,14 +199,15 @@ function calculateReadingTime(textParserObj, avgReadingSpeed) {
     var textParserObj = textParserObj;
 
     var wrdCnt = textParserObj.wordCount,
-        imgCnt = textParserObj.is_image,
-        codeCnt = textParserObj.is_code,
+        imgCnt = textParserObj.isImage,
+        codeCnt = textParserObj.isCode,
         avgRdngSpd = avgReadingSpeed,
         rdngTime = 0;
-    var imgViewTime = imageViewTime(imgCnt);
+    var imgViewTime = imageScanTime(imgCnt);
 
     rdngTime += parseInt(wrdCnt, 10) / parseInt(avgReadingSpeed);
     rdngTime += Math.ceil(parseInt(imgViewTime) / 60);
+    rdngTime += rdngTime * 0.20; // Amount of distraction happens
 
     if (rdngTime < 60) {
         return rdngTime = Math.ceil(rdngTime) + " min";
@@ -294,27 +216,42 @@ function calculateReadingTime(textParserObj, avgReadingSpeed) {
         var hour = Math.ceil(rdngTime / 24);
         return hour + " hour" + ":" + mnt + " min";
     }
-
     return false;
 }
-$(document).ready(function () {
-    //console.log(domParser(readingContent));
-    var readtime = calculateReadingTime(domParser(readingContent), 275);
-    readtimePopout(readtime);
-});
 
 function readtimePopout(readtime) {
     if (readtime) {
         $.get(chrome.extension.getURL('src/inject/html/readtime.html'), function (data) {
             data = data.replace("__rdtm__duration_", readtime);
             $(data).prependTo('body');
-
             $(".clpsck-extn__cls").on("click", function () {
                 popupCls($(this));
             });
         });
     }
 }
+
+function getReadTimePopout(location, avgRdngSpd) {
+    if (!location) {
+        var location = window.location;
+    }
+    popupCls($(".clpsck-extn__cls"));
+    var readContent = readingContent(location);
+    var parsedContent = domParser(readContent);
+    var readtime = calculateReadingTime(parsedContent, avgRdngSpd);
+    readtimePopout(readtime);
+}
+(function () { //create a scope so "location" is not global
+    var location = window.location.href;
+    setInterval(function () {
+        if (location != window.location.href) {
+            location = window.location.href;
+            setTimeout(function () {
+                 getReadTimePopout(null, 275);
+            }, 500)
+        }
+    }, 1000);
+})();
 
 function popupCls($this) {
     $this.parents(".clpsck-extn").remove();
