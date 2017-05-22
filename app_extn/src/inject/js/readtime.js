@@ -7,15 +7,15 @@ Which will basically contains more than two parameters
     message: readable contextual message or reason for status. @return STRING
 }
 
-
 /* [1] It helps us to find the selector; 
 Algo: search on page for specific element paired with website or 'article' tag for reading content */
 
 function readtime(avgReadingTime) {
     this.avgReadingSpeed = "";
 }
-
-getReadTimePopout(null, 275);
+$(document).ready(function () {
+    getReadTimePopout(null, 275);
+});
 
 function readingContent(location) {
     var isValid = (function () {
@@ -100,7 +100,6 @@ function getText(elem) {
             if (nstdNode.nodeType != 8 && (nstdNode.nodeName != "IMG" || "NOSCRIPT" || "SCRIPT"))
                 if (nstdNode.nodeType == 3) {
                     text += nstdNode.nodeValue;
-
                 } else {
                     text += getText(nstdNode);
                 }
@@ -130,7 +129,6 @@ function domParser(elementNode) {
         isVideo: videoCount,
         isCode: codeBlockCount
     };
-
     domInfo.status = true;
     domInfo.message = "It contains";
     return domInfo;
@@ -207,7 +205,7 @@ function calculateReadingTime(textParserObj, avgReadingSpeed) {
 
     rdngTime += parseInt(wrdCnt, 10) / parseInt(avgReadingSpeed);
     rdngTime += Math.ceil(parseInt(imgViewTime) / 60);
-    rdngTime += rdngTime * 0.20; // Amount of distraction happens
+   // rdngTime += rdngTime * 0.20; // Amount of distraction happens
 
     if (rdngTime < 60) {
         return rdngTime = Math.ceil(rdngTime) + " min";
@@ -247,7 +245,7 @@ function getReadTimePopout(location, avgRdngSpd) {
         if (location != window.location.href) {
             location = window.location.href;
             setTimeout(function () {
-                 getReadTimePopout(null, 275);
+                getReadTimePopout(null, 275);
             }, 500)
         }
     }, 1000);

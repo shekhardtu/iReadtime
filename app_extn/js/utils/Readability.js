@@ -36,9 +36,6 @@ function Readability(uri, doc, options) {
   this._articleByline = null;
   this._articleDir = null;
 
-  // Custom requirements 
-  this._realContent = null;
-
   // Configureable options
   this._debug = !options.debug; // enable/disable debugging 
   this._maxElemsToParse = options.maxElemsToParse || this.DEFAULT_MAX_ELEMS_TO_PARSE;
@@ -977,13 +974,6 @@ Readability.prototype = {
       // Keep potential top candidate's parent node to try to get text direction of it later.
       parentOfTopCandidate = topCandidate.parentNode;
       var siblings = parentOfTopCandidate.children;
-      // Custom requirements [Start]
-      
-      if (!this._realContent) {
-        this._realContent = parentOfTopCandidate.cloneNode('*');
-      }
-      // Custom requirements [End]
-
       for (var s = 0, sl = siblings.length; s < sl; s++) {
         var sibling = siblings[s];
         var append = false;
@@ -1740,26 +1730,17 @@ Readability.prototype = {
         metadata.excerpt = paragraphs[0].textContent.trim();
       }
     }
-
     var textContent = articleContent.textContent;
-    var imgCount = this._grabImages(this._realContent);
 
     var vendor = {
       content: articleContent.innerHTML,
       textContent: textContent,
       length: textContent.length,
-      imageCount: this._grabImages(articleContent), 
+      imageCount: this._grabImages(articleContent),
       codeBlockCount: '',
       videoCount: '',
-    },
-    custom = {
-      imageCount: imgCount, 
-      codeBlockCount: '',
-      videoCount: '',
-      textContent: this._realContent.textContent,
-      content: this._realContent.innerHTML,
-      length: this._realContent.textContent.length
     };
+   
         
     return {
       uri: this._uri,
@@ -1767,8 +1748,7 @@ Readability.prototype = {
       byline: metadata.byline || this._articleByline,
       dir: this._articleDir,
       excerpt: metadata.excerpt,
-      vendor,
-      custom
+      vendor
     };
   }
 };

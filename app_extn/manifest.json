@@ -41,8 +41,7 @@
         ],
         "js": [
             "js/jquery/jquery.min.js", "src/inject/js/inject.js", "js/utils/utils.js", "js/utils/Readability.js",  "src/inject/js/content.js", "src/inject/js/readtime.js"
-        ],
-        "run_at": "document_end"
+        ]
     }]
     ,
     "web_accessible_resources": [
