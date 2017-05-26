@@ -5,8 +5,8 @@ var readtime = mongoose.model('Readtime');
 module.exports.getReadTime = function (req, res) {
     console.log(req);
     
-    //console.log(loc);
-    var loc = req.query.location;
+    console.log(loc);
+    var loc = req;
    
     sendJsonResponse(res, 200, loc)
 };

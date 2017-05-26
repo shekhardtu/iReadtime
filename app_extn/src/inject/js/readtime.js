@@ -52,6 +52,9 @@ function readingContent(location) {
     return article;
 }
 
+
+
+
 /* [2.1.1] After getting selector, it tells us if that selector is class, id or simply sytactical tag */
 function classTagOrID(selector) {
     if (selector.indexOf(".") !== -1) {
@@ -205,7 +208,7 @@ function calculateReadingTime(textParserObj, avgReadingSpeed) {
 
     rdngTime += parseInt(wrdCnt, 10) / parseInt(avgReadingSpeed);
     rdngTime += Math.ceil(parseInt(imgViewTime) / 60);
-   // rdngTime += rdngTime * 0.20; // Amount of distraction happens
+    rdngTime += rdngTime * 0.20; // Amount of distraction happens
 
     if (rdngTime < 60) {
         return rdngTime = Math.ceil(rdngTime) + " min";
@@ -223,7 +226,7 @@ function readtimePopout(readtime) {
             data = data.replace("__rdtm__duration_", readtime);
             $(data).prependTo('body');
             $(".clpsck-extn__cls").on("click", function () {
-                popupCls($(this));
+                popupCls($(this), true);
             });
         });
     }
@@ -233,12 +236,13 @@ function getReadTimePopout(location, avgRdngSpd) {
     if (!location) {
         var location = window.location;
     }
-    popupCls($(".clpsck-extn__cls"));
+    popupCls($(".clpsck-extn__cls"), false); // @false: user action or close action
     var readContent = readingContent(location);
     var parsedContent = domParser(readContent);
     var readtime = calculateReadingTime(parsedContent, avgRdngSpd);
     readtimePopout(readtime);
 }
+
 (function () { //create a scope so "location" is not global
     var location = window.location.href;
     setInterval(function () {
@@ -251,6 +255,36 @@ function getReadTimePopout(location, avgRdngSpd) {
     }, 1000);
 })();
 
-function popupCls($this) {
+function popupCls($this, flag) {
     $this.parents(".clpsck-extn").remove();
+    if (flag) {
+        chrome.runtime.sendMessage({
+            reqType: "close",
+            readability: readingContent(window.location)
+        }, function (response) {
+            console.log(response); // asynchronous call 
+        });
+    }    
 }
+
+
+chrome.runtime.sendMessage({
+    reqType: "readtime",
+    readability: readingContent(window.location)
+}, function (response) {
+    console.log(response); // asynchronous call 
+});
+
+chrome.runtime.sendMessage({
+    reqType: "bookmark",
+    readability: readingContent(window.location)
+}, function (response) {
+    console.log(response); // asynchronous call 
+});
+
+chrome.runtime.sendMessage({
+    reqType: "article_read",
+    readability: readingContent(window.location)
+}, function (response) {
+    console.log(response); // asynchronous call 
+});

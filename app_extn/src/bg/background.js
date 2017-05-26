@@ -1,54 +1,46 @@
-// if you checked "fancy-settings" in extensionizr.com, uncomment this lines
+//if you checked 'fancy-settings' in extensionizr.com, uncomment this lines
 
-// var settings = new Store("settings", {
-//     "sample_setting": "This is how you use Store.js to remember values"
+// var settings = new Store('settings', {
+//     'sample_setting': 'This is how you use Store.js to remember values'
 // });
 
 
 //example of using a message handler from the inject scripts
-// chrome.extension.onMessage.addListener(
-//     function(request, sender, sendResponse) {
-//         chrome.pageAction.show(sender.tab.id);
-//         sendResponse();
+chrome.bookmarks.getTree(function (itemTree) {
+    //   console.info(itemTree)
+    // itemTree.forEach(function(item) {
+    //     processNode(item);
+    // });
+});
 
-//     });
-
-
-// chrome.bookmarks.getTree(function(itemTree) {
-//     console.info(itemTree)
-//         // itemTree.forEach(function(item) {
-//         //     processNode(item);
-//         // });
-// });
-
-// function processNode(node) {
-//     // recursively process child nodes
-//     if (node.children) {
-//         node.children.forEach(function(child) { processNode(child); });
-//     }
-
-//     // print leaf nodes URLs to console
-//     if (node.url) { console.log(node.url); }
-// }
-;
-(function() {
-    console.log("Cookie set");
-})();
-
-// background.js
-var bookmarks = {
-
+function processNode(node) {
+    // recursively process child nodes
+    if (node.children) {
+        node.children.forEach(function (child) {
+            processNode(child);
+        });
     }
-    // Called when the user clicks on the browser action.
-chrome.browserAction.onClicked.addListener(function(tab) {
 
+    // print leaf nodes URLs to console
+    if (node.url) {
+        // console.log(node.url);
+    }
+};
+
+// Called when the user clicks on the browser action.
+chrome.browserAction.onClicked.addListener(function (tab) {
     // Send a message to the active tab
-    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+    chrome.tabs.query({
+        active: true,
+        currentWindow: true
+    }, function (tabs) {
         var activeTab = tabs[0];
-        chrome.tabs.sendMessage(activeTab.id, { "message": "clicked_browser_action" });
+        chrome.tabs.sendMessage(activeTab.id, {
+            'message': 'clicked_browser_action'
+        });
         // No tabs or host permissions needed!
 
-        chrome.storage.sync.get('bookmarks', function(items) {
+        chrome.storage.sync.get('bookmarks', function (items) {
             bookmarks.user_id = items.bookmarks.user_id;
             if (!bookmarks.user_id) {
                 bookmarks.user_id = getRandomToken();
@@ -57,27 +49,29 @@ chrome.browserAction.onClicked.addListener(function(tab) {
         });
 
         bookmarks = {
-            "process": "add",
-            "user_id": bookmarks.user_id,
+            'process': 'add',
+            'user_id': bookmarks.user_id,
 
-            "link": {
-                "temp_id": createIdUsingString(tab.url),
-                "url": tab.url,
-                "icon": tab.favIconUrl,
-                "title": tab.title,
-                "data": {
-                    "location": "header_extn", // toolbar_extn, addurl_extn
-                    "request_time": timeStamp("ms"), // timestamp when article requested to add. It may help in delay calculation form extn to server
-                    "difference_time": "GMT" // after landing on article when did user add to extn
+            'link': {
+                'temp_id': createIdUsingString(tab.url),
+                'url': tab.url,
+                'icon': tab.favIconUrl,
+                'title': tab.title,
+                'data': {
+                    'location': 'header_extn', // toolbar_extn, addurl_extn
+                    'request_time': timeStamp('ms'), // timestamp when article requested to add. It may help in delay calculation form extn to server
+                    'difference_time': 'GMT' // after landing on article when did user add to extn
                 }
             }
 
 
         }
-        clpsck.generalFunction.setStorageData("local", "bookmarks", bookmarks);
+        clpsck.generalFunction.setStorageData('local', 'bookmarks', bookmarks);
 
-        chrome.storage.sync.set({ 'bookmarks': bookmarks }, function(msg) {
-            console.log(msg);
+        chrome.storage.sync.set({
+            'bookmarks': bookmarks
+        }, function (msg) {
+            //  console.log(msg);
             // Notify that we saved.
             //message('Settings saved');
             //console.log(bookmarks);
@@ -87,16 +81,16 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 
 // This block is new!
 chrome.runtime.onMessage.addListener(
-    function(request, sender, sendResponse) {
-        if (request.message === "open_new_tab") {
-            // chrome.tabs.create({ "url": request.url });
+    function (request, sender, sendResponse) {
+        if (request.message === 'open_new_tab') {
+            // chrome.tabs.create({ 'url': request.url });
             // console.log(chrome.tab);
         }
     }
 );
 
 function createIdUsingString(string) {
-    var string = string.replace(/[^a-zA-Z0-9_]/g, "");
+    var string = string.replace(/[^a-zA-Z0-9_]/g, '');
     return string;
 }
 
@@ -127,15 +121,18 @@ function getRandomToken() {
 }
 
 function setUserData() {
-
-    chrome.storage.local.set({ 'bookmarks': bookmarks }, function(msg) {
-        console.log(msg);
+    chrome.storage.local.set({
+        'bookmarks': bookmarks
+    }, function (msg) {
+        // console.log(msg);
         // Notify that we saved.
         //message('Settings saved');
         //console.log(bookmarks);
     });
-
-    return { status: true, msg: "bookmark saved" }
+    return {
+        status: true,
+        message: 'bookmark saved'
+    }
 
 }
 
@@ -159,4 +156,44 @@ function calculateTimeDifference(pastTimeStamp, currentTimeStamp) {
     var secondsDifference = Math.floor(difference / 1000);
 
     console.log('difference = ' + daysDifference + ' day/s ' + hoursDifference + ' hour/s ' + minutesDifference + ' minute/s ' + secondsDifference + ' second/s ');
+}
+
+chrome.runtime.onMessage.addListener(
+    function (request, sender, sendResponse) {
+        console.log(sender.tab ? 'from a content script:' + sender.tab.url : 'from the extension');
+        if (request.reqType == 'readtime') {
+            console.log(request);
+            ajaxRequest('http://clipsack.herokuapp.com/readtime/', request.readability, 'post', null).done(function (response) {
+                sendResponse(request);
+                console.log(request);
+            });
+        } else if (request.reqType == 'bookmark') {
+           
+            sendResponse(request);
+        } else if (request.reqType == 'article_read') {
+            
+            sendResponse(request);
+        } else if (request.reqType == 'close') {
+            ajaxRequest(url, data, method, null).done(function (response) {
+                sendResponse(request);
+            })
+        }
+    });
+
+
+function ajaxRequest(url, formData, method, otherParam) {
+    if (otherParam) {
+
+    }
+
+    var dfd = $.Deferred();
+    $.ajax({
+        url: url,
+        type: method,
+        data: formData,
+    }).done(function (response) {
+        dfd.resolve(response);
+        console.log('ajax send');
+    });
+    return dfd.promise();
 }
