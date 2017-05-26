@@ -160,12 +160,12 @@ function calculateTimeDifference(pastTimeStamp, currentTimeStamp) {
 
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
-        console.log(sender.tab ? 'from a content script:' + sender.tab.url : 'from the extension');
+        // console.log(sender.tab ? 'from a content script:' + sender.tab.url : 'from the extension');
         if (request.reqType == 'readtime') {
-            console.log(request);
-            ajaxRequest('http://clipsack.herokuapp.com/readtime/', request.readability, 'post', null).done(function (response) {
-                sendResponse(request);
-                console.log(request);
+            //console.log(request);
+            ajaxRequest('http://clipsack.herokuapp.com/api/readtime/', request.readability.uri, 'get', null).done(function (response) {
+               // sendResponse(request);
+                sendResponse(response);
             });
         } else if (request.reqType == 'bookmark') {
            
@@ -174,9 +174,10 @@ chrome.runtime.onMessage.addListener(
             
             sendResponse(request);
         } else if (request.reqType == 'close') {
-            ajaxRequest(url, data, method, null).done(function (response) {
-                sendResponse(request);
-            })
+            ajaxRequest('http://clipsack.herokuapp.com/api/readtime/', request.readability.meta, 'get', null).done(function (response) {
+               // sendResponse(request);
+                sendResponse(response);
+            });
         }
     });
 
@@ -193,7 +194,7 @@ function ajaxRequest(url, formData, method, otherParam) {
         data: formData,
     }).done(function (response) {
         dfd.resolve(response);
-        console.log('ajax send');
+        //console.log('ajax send');
     });
     return dfd.promise();
 }

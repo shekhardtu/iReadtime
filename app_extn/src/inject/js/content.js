@@ -3,7 +3,7 @@ chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         if (request.message === "clicked_browser_action") {
             var firstHref = $("a[href^='http']").eq(0).attr("href");
-            console.log(firstHref);
+            //console.log(firstHref);
             if ($(".clpsck-extn").length) {
                 $(".clpsck-extn").remove();
                 return;
@@ -16,7 +16,7 @@ chrome.runtime.onMessage.addListener(
                 // $($.parseHTML(data)).appendTo('body');
                 $(".clpsck-extn__cls").on("click", function() {
                     popupCls($(this));
-                    console.log("click on close0");
+                   // console.log("click on close0");
 
                 });
             });
@@ -28,7 +28,7 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
-console.log("Messgae from content.js")
+//console.log("Messgae from content.js")
 
 function popupCls($this) {
     $this.parents(".clpsck-extn").remove();

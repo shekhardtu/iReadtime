@@ -3,7 +3,7 @@ var router = express.Router();
 var readTime = require('../controllers/readtime');
 
 // readtime routers 
-router.get('/readtime/:userId/:url', readTime.getReadTime); // to get the article readtime
+router.get('/readtime/', readTime.getReadTime); // to get the article readtime
 //router.post('/readtime/:articleId', readTime.saveReadTime); // After article finish it will save the complete reading time of a user
 
 

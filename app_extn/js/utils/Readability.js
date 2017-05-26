@@ -1732,23 +1732,25 @@ Readability.prototype = {
     }
     var textContent = articleContent.textContent;
 
-    var vendor = {
-      content: articleContent.innerHTML,
-      textContent: textContent,
+    var meta = {
       length: textContent.length,
       imageCount: this._grabImages(articleContent),
       codeBlockCount: '',
-      videoCount: '',
+      videoCount: ''
     };
    
-        
+    var content = {
+      excerpt: metadata.excerpt,
+      text: textContent,
+      html: articleContent.innerHTML,
+      title: this._articleTitle,
+      byline: metadata.byline || this._articleByline
+    }
     return {
       uri: this._uri,
-      title: this._articleTitle,
-      byline: metadata.byline || this._articleByline,
+      content, 
       dir: this._articleDir,
-      excerpt: metadata.excerpt,
-      vendor
+      meta
     };
   }
 };

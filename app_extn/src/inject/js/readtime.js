@@ -29,8 +29,8 @@ function readingContent(location) {
             return true;
         } else if (stopWebsite.indexOf(host) != -1) {
             return false;
-        } else if (window.location.pathname === "/") {
-            return false;
+        // } else if (window.location.pathname === "/") {
+        //     return false;
         } else {
             return true;
         }
@@ -118,11 +118,11 @@ function domParser(elementNode) {
             message: "This page is not applicable for readtime"
         }
     }
-    var text = elementNode.vendor.textContent,
-        imageCount = elementNode.vendor.imageCount,
+    var text = elementNode.content.text,
+        imageCount = elementNode.meta.imageCount,
         videoCount = isVideo(elementNode),
-        codeBlockCount = isCode(elementNode);
-    node = elementNode.vendor.content
+        codeBlockCount = isCode(elementNode),
+        node = elementNode.content.html;
 
     var domInfo = {
         text: text,
@@ -262,7 +262,7 @@ function popupCls($this, flag) {
             reqType: "close",
             readability: readingContent(window.location)
         }, function (response) {
-            console.log(response); // asynchronous call 
+          //  console.log(response); // asynchronous call 
         });
     }    
 }
@@ -270,21 +270,21 @@ function popupCls($this, flag) {
 
 chrome.runtime.sendMessage({
     reqType: "readtime",
-    readability: readingContent(window.location)
+    readability: window.location
 }, function (response) {
-    console.log(response); // asynchronous call 
+   // console.log(response); // asynchronous call 
 });
 
 chrome.runtime.sendMessage({
     reqType: "bookmark",
     readability: readingContent(window.location)
 }, function (response) {
-    console.log(response); // asynchronous call 
+   // console.log(response); // asynchronous call 
 });
 
 chrome.runtime.sendMessage({
     reqType: "article_read",
     readability: readingContent(window.location)
 }, function (response) {
-    console.log(response); // asynchronous call 
+   // console.log(response); // asynchronous call 
 });
