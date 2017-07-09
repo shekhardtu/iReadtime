@@ -4,28 +4,9 @@
 //     'sample_setting': 'This is how you use Store.js to remember values'
 // });
 
-
-//example of using a message handler from the inject scripts
-chrome.bookmarks.getTree(function (itemTree) {
-    //   console.info(itemTree)
-    // itemTree.forEach(function(item) {
-    //     processNode(item);
-    // });
-});
-
-function processNode(node) {
-    // recursively process child nodes
-    if (node.children) {
-        node.children.forEach(function (child) {
-            processNode(child);
-        });
-    }
-
-    // print leaf nodes URLs to console
-    if (node.url) {
-        // console.log(node.url);
-    }
-};
+/* env variables [Start] */
+var host = 'http://localhost:3000';
+/* env variables [End] */
 
 // Called when the user clicks on the browser action.
 chrome.browserAction.onClicked.addListener(function (tab) {
@@ -40,13 +21,7 @@ chrome.browserAction.onClicked.addListener(function (tab) {
         });
         // No tabs or host permissions needed!
 
-        chrome.storage.sync.get('bookmarks', function (items) {
-            bookmarks.user_id = items.bookmarks.user_id;
-            if (!bookmarks.user_id) {
-                bookmarks.user_id = getRandomToken();
-            }
-            console.log(items.bookmarks);
-        });
+
 
         bookmarks = {
             'process': 'add',
@@ -63,8 +38,6 @@ chrome.browserAction.onClicked.addListener(function (tab) {
                     'difference_time': 'GMT' // after landing on article when did user add to extn
                 }
             }
-
-
         }
         clpsck.generalFunction.setStorageData('local', 'bookmarks', bookmarks);
 
@@ -162,22 +135,32 @@ chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         // console.log(sender.tab ? 'from a content script:' + sender.tab.url : 'from the extension');
         if (request.reqType == 'readtime') {
+            var userId = clpsck.generalFunction.getStorageData('local', 'userId');
+            userId = userId ? userId : 0;
+            var lastArticleId = userId ? clpsck.generalFunction.getStorageData('local', 'lastArticleId') : false;
+            request.readability.userId = userId,
+                request.readability.accountType = 'reader',
+                request.readability.referrer = 'readtime',
+                request.readability.environment = 'testing',
+                request.readability.isRegistered = 0,
+                request.readability.articleId = createIdUsingString(request.readability.href);
             //console.log(request);
-            ajaxRequest('http://clipsack.herokuapp.com/api/readtime/', request.readability.uri, 'get', null).done(function (response) {
-               // sendResponse(request);
-                sendResponse(response);
-            });
+            if (request.readability.articleId !== lastArticleId) {
+                ajaxRequest(host + '/api/readtime/', request.readability, 'get', null).done(function (response) {
+                    clpsck.generalFunction.setStorageData('local', 'userId', response.userId);
+                    clpsck.generalFunction.setStorageData('local', 'lastArticleId', response.articleId);
+                  //  sendResponse(response);
+                });
+            }
+
+
+
         } else if (request.reqType == 'bookmark') {
-           
             sendResponse(request);
         } else if (request.reqType == 'article_read') {
-            
             sendResponse(request);
         } else if (request.reqType == 'close') {
-            ajaxRequest('http://clipsack.herokuapp.com/api/readtime/', request.readability.meta, 'get', null).done(function (response) {
-               // sendResponse(request);
-                sendResponse(response);
-            });
+            sendResponse(request);
         }
     });
 

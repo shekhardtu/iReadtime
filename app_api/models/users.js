@@ -1,11 +1,6 @@
 var mongoose = require('mongoose');
-var schema = mongoose.Schema;
-var userSchema = new schema({
-    accessToken: {
-        type: String,
-        required: true,
-        trim: true
-    },
+var Schema = mongoose.Schema;
+var userSchema = new Schema({
     accountType: {
         type: String,
         required: true,
@@ -18,19 +13,21 @@ var userSchema = new schema({
     },
     firstVisit: {
         type: Date,
+        default: Date.now,
         required: true
     },
     isRegistered: {
         type: Boolean,
         required: true
     },
-    env: {
+    environment: {
         type: String, // It can be used to identify data type as if production data or development data.
         required: true
     }
 });
 
-var urlInfoSchema = new schema({
+// 
+var urlInfoSchema = new Schema({
     url: {
         type: String,
         required: true,
@@ -47,7 +44,7 @@ var urlInfoSchema = new schema({
     },
     title: {
         type: String
-    }, 
+    },
     html: {
         type: String
     },
@@ -59,7 +56,66 @@ var urlInfoSchema = new schema({
     }
 
 });
-var readTimeSchema = new schema({
+
+var visitedUrlSchema = new Schema({
+    href: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    origin: {
+        type: String,
+    },
+    protocol: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    host: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    hostname: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    port: {
+        type: String
+    },
+    pathname: {
+        type: String
+    },
+    search: {
+        type: String
+    },
+    hash: {
+        type: String
+    },
+    userId: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    referrer: {
+        type: String
+    },
+    environment: {
+        type: String
+    },
+    articleId: {
+        type: String,
+        required: true,
+        trim: true
+    }
+});
+
+var readTimeSchema = new Schema({
     userId: {
         type: String,
         required: true,
@@ -97,7 +153,8 @@ var readTimeSchema = new schema({
     }
 });
 
-mongoose.model('Readtime', readTimeSchema, "readtimes");
-mongoose.model('User', userSchema, "users");
+mongoose.model('Readtime', readTimeSchema, 'readtimes');
+mongoose.model('User', userSchema, 'users');
+mongoose.model('VisitedUrl', visitedUrlSchema, 'visitedurls');
 
 //mongoose.model(users, usersSchema, "users");

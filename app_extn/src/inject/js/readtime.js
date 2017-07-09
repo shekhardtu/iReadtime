@@ -272,7 +272,7 @@ chrome.runtime.sendMessage({
     reqType: "readtime",
     readability: window.location
 }, function (response) {
-   // console.log(response); // asynchronous call 
+   console.log(response); // asynchronous call 
 });
 
 chrome.runtime.sendMessage({

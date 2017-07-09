@@ -81,7 +81,7 @@ var clpsck = {
         getStorageData: function(type, dataRow) {
             var storageType = window[type + 'Storage'];
             if (!storageType.getItem(dataRow)) {
-                return { msg: "row does not exit", status: false }
+                return false;
             } else {
                 return storageType.getItem(dataRow)
             }
@@ -90,8 +90,8 @@ var clpsck = {
             //dataRow should be in JSON format;
             var storageType = window[type + 'Storage'];
 
-            storageType.setItem(dataRowName, JSON.stringify(dataToStore));
-            return { msg: "row has been set successfully", status: true }
+            storageType.setItem(dataRowName, dataToStore);
+            return true;
 
         },
         removeStorageData: function(dataRowName) {
