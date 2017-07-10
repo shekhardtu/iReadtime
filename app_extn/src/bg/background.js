@@ -10,47 +10,47 @@ var host = 'http://clipsack.herokuapp.com'; // prodApiUrl
 /* env variables [End] */
 
 // Called when the user clicks on the browser action.
-chrome.browserAction.onClicked.addListener(function (tab) {
-    // Send a message to the active tab
-    chrome.tabs.query({
-        active: true,
-        currentWindow: true
-    }, function (tabs) {
-        var activeTab = tabs[0];
-        chrome.tabs.sendMessage(activeTab.id, {
-            'message': 'clicked_browser_action'
-        });
-        // No tabs or host permissions needed!
+// chrome.browserAction.onClicked.addListener(function (tab) {
+//     // Send a message to the active tab
+//     chrome.tabs.query({
+//         active: true,
+//         currentWindow: true
+//     }, function (tabs) {
+//         var activeTab = tabs[0];
+//         chrome.tabs.sendMessage(activeTab.id, {
+//             'message': 'clicked_browser_action'
+//         });
+//         // No tabs or host permissions needed!
 
 
 
-        bookmarks = {
-            'process': 'add',
-            'user_id': bookmarks.user_id,
-            'link': {
-                'temp_id': createIdUsingString(tab.url),
-                'url': tab.url,
-                'icon': tab.favIconUrl,
-                'title': tab.title,
-                'data': {
-                    'location': 'header_extn', // toolbar_extn, addurl_extn
-                    'request_time': timeStamp('ms'), // timestamp when article requested to add. It may help in delay calculation form extn to server
-                    'difference_time': 'GMT' // after landing on article when did user add to extn
-                }
-            }
-        }
-        clpsck.generalFunction.setStorageData('local', 'bookmarks', bookmarks);
+//         bookmarks = {
+//             'process': 'add',
+//             'user_id': bookmarks.user_id,
+//             'link': {
+//                 'temp_id': createIdUsingString(tab.url),
+//                 'url': tab.url,
+//                 'icon': tab.favIconUrl,
+//                 'title': tab.title,
+//                 'data': {
+//                     'location': 'header_extn', // toolbar_extn, addurl_extn
+//                     'request_time': timeStamp('ms'), // timestamp when article requested to add. It may help in delay calculation form extn to server
+//                     'difference_time': 'GMT' // after landing on article when did user add to extn
+//                 }
+//             }
+//         }
+//         clpsck.generalFunction.setStorageData('local', 'bookmarks', bookmarks);
 
-        chrome.storage.sync.set({
-            'bookmarks': bookmarks
-        }, function (msg) {
-            //  console.log(msg);
-            // Notify that we saved.
-            //message('Settings saved');
-            //console.log(bookmarks);
-        });
-    });
-});
+//         chrome.storage.sync.set({
+//             'bookmarks': bookmarks
+//         }, function (msg) {
+//             //  console.log(msg);
+//             // Notify that we saved.
+//             //message('Settings saved');
+//             //console.log(bookmarks);
+//         });
+//     });
+// });
 
 
 function createIdUsingString(string) {
