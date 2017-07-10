@@ -26,14 +26,43 @@ module.exports.getReadTime = function (req, res) {
     });
   } else {
     visitedurl.create(obj, function (err, visitedurl) {
-      if (err) {
-        sendJsonResponse(res, 400, err);
-      } else {
-        sendJsonResponse(res, 201, visitedurl);
-      }
+      var visitedurl = visitedurl.toObject();
+      user.find({ _id: obj.userId }, 'skipPages', function (err, docs) {
+        visitedurl['skipPage'] = isSkipPage(obj.href, docs[0].skipPages);
+        if (err) {
+          sendJsonResponse(res, 400, err);
+        } else {
+          sendJsonResponse(res, 201, visitedurl);
+        }
+      });  
     });
   }
 };
+
+module.exports.skipPage = function (req, res) {
+  var obj = req.query;
+  user.update({
+    _id: obj.userId
+  }, {
+    $push: {
+      skipPages: {
+        url: obj.url,
+        date: Date.now()
+      }
+    }
+  }, function (err, skipPages) {
+    if (err) {
+      sendJsonResponse(res, 400, err);
+    } else {
+      sendJsonResponse(res, 201, skipPages);
+    }
+  });
+};
+
+
+function isSkipPage(currentUrl, urlArr) {
+  return urlArr.findIndex(i => i.url === currentUrl) > -1 ? true : false;  
+} 
 
 var sendJsonResponse = function (res, status, content) {
   res.status(status);

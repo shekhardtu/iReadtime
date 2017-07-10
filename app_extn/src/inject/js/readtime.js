@@ -14,7 +14,15 @@ function readtime(avgReadingTime) {
     this.avgReadingSpeed = "";
 }
 $(document).ready(function () {
-    getReadTimePopout(null, 275);
+    chrome.runtime.sendMessage({
+        reqType: "readtime",
+        readability: window.location
+    }, function (response) {
+        if (!response.skipPage) {
+            getReadTimePopout(null, 275);
+        }      
+    });
+
 });
 
 function readingContent(location) {
@@ -29,8 +37,8 @@ function readingContent(location) {
             return true;
         } else if (stopWebsite.indexOf(host) != -1) {
             return false;
-        // } else if (window.location.pathname === "/") {
-        //     return false;
+            // } else if (window.location.pathname === "/") {
+            //     return false;
         } else {
             return true;
         }
@@ -226,8 +234,13 @@ function readtimePopout(readtime) {
             data = data.replace("__rdtm__duration_", readtime);
             $(data).prependTo('body');
             $(".clpsck-extn__cls").on("click", function () {
-                popupCls($(this), true);
+                popupCls($(this), false);
             });
+
+            $('.js-skipForPage').on('click', function () {
+                skipForPage($(this), false);;
+            });
+
         });
     }
 }
@@ -249,7 +262,14 @@ function getReadTimePopout(location, avgRdngSpd) {
         if (location != window.location.href) {
             location = window.location.href;
             setTimeout(function () {
-                getReadTimePopout(null, 275);
+                chrome.runtime.sendMessage({
+                    reqType: "readtime",
+                    readability: window.location
+                }, function (response) {
+                    if (!response.skipPage) {
+                        getReadTimePopout(null, 275);
+                    }    
+                });
             }, 500)
         }
     }, 1000);
@@ -262,29 +282,32 @@ function popupCls($this, flag) {
             reqType: "close",
             readability: readingContent(window.location)
         }, function (response) {
-          //  console.log(response); // asynchronous call 
+            //  console.log(response); // asynchronous call 
         });
-    }    
+    }
+}
+
+function skipForPage($this, flag) {
+    chrome.runtime.sendMessage({
+        reqType: "skipPage",
+        url: window.location.href
+    }, function (response) {
+        popupCls($this, flag)
+    });
 }
 
 
-chrome.runtime.sendMessage({
-    reqType: "readtime",
-    readability: window.location
-}, function (response) {
-   console.log(response); // asynchronous call 
-});
 
 chrome.runtime.sendMessage({
     reqType: "bookmark",
     readability: readingContent(window.location)
 }, function (response) {
-   // console.log(response); // asynchronous call 
+    // console.log(response); // asynchronous call 
 });
 
 chrome.runtime.sendMessage({
     reqType: "article_read",
     readability: readingContent(window.location)
 }, function (response) {
-   // console.log(response); // asynchronous call 
+    // console.log(response); // asynchronous call 
 });

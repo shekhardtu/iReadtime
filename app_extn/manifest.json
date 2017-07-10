@@ -1,8 +1,8 @@
 {
     "version": "0.0.1",
     "manifest_version": 2,
-    "description": "Clipsack helps you to manage your bookmarks, clipboard, videos, images and many more things", 
-    "homepage_url": "http://www.clipsack.com",
+    "description": "Readtime helps you to estimate the article reading time", 
+    // "homepage_url": "http://www.clipsack.com",
     "default_locale": "en", 
     "background": {
         "persistent": true,
@@ -12,25 +12,20 @@
             "src/bg/background.js"
         ]
     },
-    "name": "Clipsack : My reading assistance",
-    "options_page": "src/options_custom/index.html",
+    "name": "Readtime",
     "browser_action": {
         "default_icon": "icons/icon19.png",
-        "default_title": "Clipsack" 
+        "default_title": "Readtime" 
     },
     "permissions": [
-        "bookmarks",
-        "contextMenus",
-        "cookies",
         "idle",
-        "notifications",
         "tabs",
         "http://*/*",
-        "https://*/*",
-        "storage"
+        "https://*/*"
+        // ,"storage"
     ],
     "omnibox": {
-        "keyword": "clipsack"
+        "keyword": "Readtime, Reading Time, Content Reading Time Eastimator, Glance"
     },
     "content_scripts": [{
         "matches": [
@@ -40,7 +35,7 @@
             "src/inject/css/inject.css"
         ],
         "js": [
-            "js/jquery/jquery.min.js", "src/inject/js/inject.js", "js/utils/utils.js", "js/utils/Readability.js",  "src/inject/js/content.js", "src/inject/js/readtime.js"
+            "js/jquery/jquery.min.js", "js/utils/utils.js", "js/utils/Readability.js",  "src/inject/js/readtime.js"
         ]
     }]
     ,

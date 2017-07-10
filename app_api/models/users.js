@@ -23,6 +23,9 @@ var userSchema = new Schema({
     environment: {
         type: String, // It can be used to identify data type as if production data or development data.
         required: true
+    },
+    skipPages: {
+        type: Array
     }
 });
 
@@ -112,6 +115,9 @@ var visitedUrlSchema = new Schema({
         type: String,
         required: true,
         trim: true
+    },
+    isSkipPage: {
+        type: Boolean
     }
 });
 

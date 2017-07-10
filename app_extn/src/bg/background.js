@@ -5,7 +5,8 @@
 // });
 
 /* env variables [Start] */
-var host = 'http://localhost:3000';
+//  var host = 'http://localhost:3000';
+var host = 'http://clipsack.herokuapp.com'; // prodApiUrl
 /* env variables [End] */
 
 // Called when the user clicks on the browser action.
@@ -26,7 +27,6 @@ chrome.browserAction.onClicked.addListener(function (tab) {
         bookmarks = {
             'process': 'add',
             'user_id': bookmarks.user_id,
-
             'link': {
                 'temp_id': createIdUsingString(tab.url),
                 'url': tab.url,
@@ -52,15 +52,6 @@ chrome.browserAction.onClicked.addListener(function (tab) {
     });
 });
 
-// This block is new!
-chrome.runtime.onMessage.addListener(
-    function (request, sender, sendResponse) {
-        if (request.message === 'open_new_tab') {
-            // chrome.tabs.create({ 'url': request.url });
-            // console.log(chrome.tab);
-        }
-    }
-);
 
 function createIdUsingString(string) {
     var string = string.replace(/[^a-zA-Z0-9_]/g, '');
@@ -149,20 +140,38 @@ chrome.runtime.onMessage.addListener(
                 ajaxRequest(host + '/api/readtime/', request.readability, 'get', null).done(function (response) {
                     clpsck.generalFunction.setStorageData('local', 'userId', response.userId);
                     clpsck.generalFunction.setStorageData('local', 'lastArticleId', response.articleId);
-                  //  sendResponse(response);
+                    clpsck.generalFunction.setStorageData('local', 'skipPage', response.skipPage);
+                    sendResponse(response);
                 });
+            } else {
+                var response = {};
+                response.skipPage = JSON.parse(clpsck.generalFunction.getStorageData('local', 'skipPage'));
+                sendResponse(response);
             }
-
-
-
+            return true;
         } else if (request.reqType == 'bookmark') {
             sendResponse(request);
         } else if (request.reqType == 'article_read') {
             sendResponse(request);
         } else if (request.reqType == 'close') {
             sendResponse(request);
+        } else if (request.reqType == 'skipPage') {
+            request.url;
+            request.userId = clpsck.generalFunction.getStorageData('local', 'userId');
+
+            ajaxRequest(host + '/api/skipPage/', request, 'get', null).done(function (data) {
+                //getTabRequests gets all the information i stored about a tab
+                if (data) {
+                    clpsck.generalFunction.setStorageData('local', 'skipPage', true);
+                    sendResponse(data);
+                }
+            });
         }
     });
+
+
+
+
 
 
 function ajaxRequest(url, formData, method, otherParam) {
@@ -177,7 +186,8 @@ function ajaxRequest(url, formData, method, otherParam) {
         data: formData,
     }).done(function (response) {
         dfd.resolve(response);
-        //console.log('ajax send');
+        // console.log(response);
     });
     return dfd.promise();
+
 }
