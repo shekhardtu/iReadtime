@@ -1,9 +1,8 @@
 {
     "version": "0.0.1",
     "manifest_version": 2,
-    "description": "Readtime helps you to estimate the article reading time", 
-    // "homepage_url": "http://www.clipsack.com",
-    "default_locale": "en", 
+    "description": "Readtime helps you to estimate the article reading time",
+    "default_locale": "en",
     "background": {
         "persistent": true,
         "scripts": [
@@ -15,14 +14,13 @@
     "name": "Readtime",
     "browser_action": {
         "default_icon": "icons/icon19.png",
-        "default_title": "Readtime" 
+        "default_title": "Readtime"
     },
     "permissions": [
         "idle",
         "tabs",
         "http://*/*",
         "https://*/*"
-        // ,"storage"
     ],
     "omnibox": {
         "keyword": "Readtime, Reading Time, Content Reading Time Eastimator, Glance"
@@ -35,15 +33,11 @@
             "src/inject/css/inject.css"
         ],
         "js": [
-            "js/jquery/jquery.min.js", "js/utils/utils.js", "js/utils/Readability.js",  "src/inject/js/readtime.js"
+            "js/jquery/jquery.min.js", "js/utils/utils.js", "js/utils/Readability.js", "src/inject/js/readtime.js"
         ]
-    }]
-    ,
-    "web_accessible_resources": [
-        //"src/inject/html/inject.html",
-        "src/inject/html/readtime.html"
-    ],
-     "icons": {
+    }],
+    "web_accessible_resources": ["src/inject/html/readtime.html"],
+    "icons": {
         "16": "icons/icon16.png",
         "19": "icons/icon19.png",
         "64": "icons/icon64.png",
