@@ -1,17 +1,17 @@
 {
-    "version": "0.0.1",
+    "version": "0.0.2",
     "manifest_version": 2,
     "description": "Readtime helps you to estimate the article reading time",
     "default_locale": "en",
     "background": {
-        "persistent": true,
+        "persistent": false,
         "scripts": [
             "js/jquery/jquery.min.js",
             "js/utils/utils.js",
             "src/bg/background.js"
         ]
     },
-    "name": "Readtime",
+    "name": "Readtime - Get reading time for any article",
     "browser_action": {
         "default_icon": "icons/icon19.png",
         "default_title": "Readtime"
@@ -28,9 +28,6 @@
     "content_scripts": [{
         "matches": [
             "*://*/*"
-        ],
-        "css": [
-            "src/inject/css/inject.css"
         ],
         "js": [
             "js/jquery/jquery.min.js", "js/utils/utils.js", "js/utils/Readability.js", "src/inject/js/readtime.js"

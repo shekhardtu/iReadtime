@@ -5,7 +5,7 @@
 // });
 
 /* env variables [Start] */
-//  var host = 'http://localhost:3000';
+// var host = 'http://localhost:3000';
 var host = 'http://clipsack.herokuapp.com'; // prodApiUrl
 /* env variables [End] */
 
@@ -136,7 +136,7 @@ chrome.runtime.onMessage.addListener(
                 request.readability.isRegistered = 0,
                 request.readability.articleId = createIdUsingString(request.readability.href);
             //console.log(request);
-            if (request.readability.articleId !== lastArticleId) {
+            if (request.readability.articleId !== lastArticleId) { // Don't send history to server if last article was as the current article
                 ajaxRequest(host + '/api/readtime/', request.readability, 'get', null).done(function (response) {
                     clpsck.generalFunction.setStorageData('local', 'userId', response.userId);
                     clpsck.generalFunction.setStorageData('local', 'lastArticleId', response.articleId);
@@ -146,6 +146,7 @@ chrome.runtime.onMessage.addListener(
             } else {
                 var response = {};
                 response.skipPage = JSON.parse(clpsck.generalFunction.getStorageData('local', 'skipPage'));
+
                 sendResponse(response);
             }
             return true;
@@ -166,12 +167,34 @@ chrome.runtime.onMessage.addListener(
                     sendResponse(data);
                 }
             });
+        } else if (request.reqType == "iconBadge") {
+            var readtime = request.readtime.replace(" min", "m");
+            chrome.tabs.get(sender.tab.id, function (tab) {
+                if (chrome.runtime.lastError) {
+                    return; // the prerendered tab has been nuked, happens in omnibox search
+                }
+                if (tab.index >= 0) { // tab is visible
+                    chrome.browserAction.setBadgeText({
+                        tabId: tab.id,
+                        text: readtime
+                    });
+                } else { // prerendered tab, invisible yet, happens quite rarely
+                    var tabId = sender.tab.id,
+                        text = readtime;
+                    chrome.webNavigation.onCommitted.addListener(function update(details) {
+                        if (details.tabId == tabId) {
+                            chrome.browserAction.setBadgeText({
+                                tabId: tabId,
+                                text: readtime
+                            });
+                            chrome.webNavigation.onCommitted.removeListener(update);
+                        }
+                    });
+                }
+            });
+
         }
     });
-
-
-
-
 
 
 function ajaxRequest(url, formData, method, otherParam) {

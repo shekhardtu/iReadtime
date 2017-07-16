@@ -19,8 +19,14 @@ $(document).ready(function () {
         readability: window.location
     }, function (response) {
         if (!response.skipPage) {
-            getReadTimePopout(null, 275);
-        }      
+            var readtime = getReadTimePopout(null, 275);
+            if (readtime) {
+                chrome.runtime.sendMessage({
+                    reqType: "iconBadge",
+                    readtime: readtime
+                }, function () {});
+            }
+        }
     });
 
 });
@@ -60,19 +66,6 @@ function readingContent(location) {
     return article;
 }
 
-
-
-
-/* [2.1.1] After getting selector, it tells us if that selector is class, id or simply sytactical tag */
-function classTagOrID(selector) {
-    if (selector.indexOf(".") !== -1) {
-        return "class";
-    } else if (selector.indexOf("#") !== -1) {
-        return "id";
-    } else {
-        return "tag";
-    }
-}
 
 
 /* [2.1] fetching the DOM of selector */
@@ -231,15 +224,19 @@ function calculateReadingTime(textParserObj, avgReadingSpeed) {
 function readtimePopout(readtime) {
     if (readtime) {
         $.get(chrome.extension.getURL('src/inject/html/readtime.html'), function (data) {
-            data = data.replace("__rdtm__duration_", readtime);
+            var data = data.replace("__rdtm__duration_", readtime);
             $(data).prependTo('body');
-            $(".clpsck-extn__cls").on("click", function () {
+
+            var $closeSelector = $(".js-clpsck-extn__cls");
+            $closeSelector.on("click", function () {
                 popupCls($(this), false);
             });
 
             $('.js-skipForPage').on('click', function () {
                 skipForPage($(this), false);;
             });
+
+            removeReadtimePopup($closeSelector, true); // popup disappear after 10 sec
 
         });
     }
@@ -249,13 +246,23 @@ function getReadTimePopout(location, avgRdngSpd) {
     if (!location) {
         var location = window.location;
     }
-    popupCls($(".clpsck-extn__cls"), false); // @false: user action or close action
+    var $closeSelector = $(".js-clpsck-extn__cls");
+    popupCls($closeSelector, false); // @false: user action or close action
     var readContent = readingContent(location);
     var parsedContent = domParser(readContent);
     var readtime = calculateReadingTime(parsedContent, avgRdngSpd);
     readtimePopout(readtime);
+    return readtime;
 }
 
+function removeReadtimePopup(selector, timerEnabled) {
+    var $this = selector;
+    if (timerEnabled) {
+        setTimeout(function () {
+            $this.click();
+        }, 4000);
+    }
+}
 (function () { //create a scope so "location" is not global
     var location = window.location.href;
     setInterval(function () {
@@ -267,8 +274,15 @@ function getReadTimePopout(location, avgRdngSpd) {
                     readability: window.location
                 }, function (response) {
                     if (!response.skipPage) {
-                        getReadTimePopout(null, 275);
-                    }    
+
+                        var readtime = getReadTimePopout(null, 275);
+                        if (readtime) {
+                            chrome.runtime.sendMessage({
+                                reqType: "iconBadge",
+                                readtime: readtime
+                            }, function () {});
+                        }
+                    }
                 });
             }, 500)
         }
@@ -276,7 +290,10 @@ function getReadTimePopout(location, avgRdngSpd) {
 })();
 
 function popupCls($this, flag) {
-    $this.parents(".clpsck-extn").remove();
+    $this.parents(".js-clpsck-extn__wrpr").removeClass("slideLeft").addClass("slideRight");
+    setTimeout(function () {
+        $this.parents(".clpsck-extn").remove();
+    }, 500)
     if (flag) {
         chrome.runtime.sendMessage({
             reqType: "close",

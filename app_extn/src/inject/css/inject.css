@@ -2,7 +2,6 @@
  * Place your custom CSS styles here.
  **/
 
-/* 
 .clpsck-extn {
     animation: initial;
     transition: opacity 0.2s;
@@ -244,7 +243,7 @@
     content: "\\0020";
 }
 
-.clpsck-extn__wrpr > * {
+.clpsck-extn__wrpr>* {
     z-index: 99;
     position: fixed !important;
     top: 50px;
@@ -328,7 +327,7 @@ clpsck-extn__popup-bkmrk--href:hover {
     display: inline-block;
 }
 
-.clpsck-extn__popup-bkmrk + .clpsck-extn__popup-bkmrk {
+.clpsck-extn__popup-bkmrk+.clpsck-extn__popup-bkmrk {
     border-top: 1px solid #EEE;
 }
 
@@ -350,7 +349,6 @@ clpsck-extn__popup-bkmrk--href:hover {
     font-size: 14px;
     font-weight: 600;
     color: #757575;
-    /*margin-bottom: 5px;*/
 }
 
 .clpsck-extn__popup-bkmrk__url {
@@ -379,4 +377,4 @@ clpsck-extn__popup-bkmrk--href:hover {
 .clpsck-extn__sctn__ftr--sub {
     font-size: 12px;
     font-weight: 300;
-}*/
+}

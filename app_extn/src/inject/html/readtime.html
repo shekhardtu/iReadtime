@@ -247,11 +247,6 @@
 
     .clpsck-extn__wrpr>* {
         z-index: 99;
-        position: fixed !important;
-        top: 50px;
-        right: 20px;
-        max-width: 420px;
-        max-height: 550px;
         transition-property: all;
         transition-duration: .5s;
         transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
@@ -269,6 +264,10 @@
 
     .clpsck-extn__wrpr {
         display: inline-block;
+        top: 50px;
+        right: 20px;
+        max-width: 420px;
+        max-height: 550px;
         position: relative;
         overflow: visible;
         margin-top: 16px;
@@ -277,12 +276,13 @@
         pointer-events: auto;
         border-radius: 4px;
         background-color: rgb(250, 250, 250);
-        box-sizing: content-box;
+        box-shadow: 1px 1px 20px #ddd;
+        box-sizing: border-box;
+        opacity: 0;
     }
 
     .clpsck-extn__cntnr {
         background-color: rgba(255, 255, 255, 0.9);
-        box-shadow: 1px 1px 20px #ddd;
         padding: 5px 15px;
         padding-right: 36px;
         border-radius: 3px;
@@ -387,8 +387,6 @@
         font-weight: 300;
     }
 
-
-
     .rdtm-extn--cntnr {
         position: relative;
     }
@@ -401,13 +399,68 @@
         font-size: 12px;
         color: #767676;
     }
+
     .rdtm-extn__skipForPage:hover {
         text-decoration: underline;
         cursor: pointer;
     }
+
+
+    @-webkit-keyframes slideLeft {
+        0%,
+        50%,
+        100% {
+            -webkit-transform: translateX(0);
+            transform: translateX(0);
+        }
+        0% {
+            -webkit-transform: translateX(200px);
+            transform: translateX(200px);
+        }
+        50% {
+            -webkit-transform: translateX(-25px);
+            transform: translateX(-25px);
+        }
+    }
+
+    @keyframes slideLeft {
+        0% {
+            -webkit-transform: translateX(200px);
+            transform: translateX(200px);
+            opacity: 0.5;
+        }
+        50% {
+            -webkit-transform: translateX(-25px);
+            transform: translateX(-25px);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideRight {
+        0% {
+            -webkit-transform: translateX(0);
+            transform: translateX(0);
+            opacity: 1;
+        }
+        100% {
+            -webkit-transform: translateX(250px);
+            transform: translateX(250px);
+            opacity: 0;
+        }
+    }
+
+    .slideLeft {
+        animation: slideLeft 800ms 1;
+        opacity: 1;
+    }
+
+    .slideRight {
+        animation: slideRight 600ms 1;
+        opacity: 0;
+    }
 </style>
 <div class="clpsck-extn">
-    <div class="clpsck-extn__wrpr">
+    <div class="clpsck-extn__wrpr js-clpsck-extn__wrpr slideLeft">
         <div class="clpsck-extn__cntnr">
             <div class="clpsck-extn__cls js-clpsck-extn__cls">&times;</div>
             <div class="rdtm-extn__sctn">
