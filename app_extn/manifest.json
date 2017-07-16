@@ -1,5 +1,5 @@
 {
-    "version": "0.0.2",
+    "version": "1.0.0",
     "manifest_version": 2,
     "description": "Readtime helps you to estimate the article reading time",
     "default_locale": "en",
