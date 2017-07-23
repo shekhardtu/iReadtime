@@ -1,12 +1,12 @@
 {
   "name": "clipsack",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"
   },
   "engines": {
-    "node": "6.11.1",
+    "node": "~6.11.1",
     "npm": "~4.4.4"
   },
   "dependencies": { 

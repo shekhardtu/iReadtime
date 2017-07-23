@@ -5,17 +5,23 @@ var user = mongoose.model('User'),
 
 
 module.exports.getReadTime = function (req, res) {
-  var obj = req.query;
+  var obj = req.query,
+      userId = parseInt(obj.userId);
+  obj["clientIp"] = getRemoteIp(req);
+  /* This section is for testing purpose [Start] */
+  // sendJsonResponse(res, 201, obj);
+  // return; 
+  /* This section is for testing purpose [End] */
 
-  if (obj.userId == 0) {
+  if (!userId) {
     var usrObj = createUserModel(obj);
-    var visitedUrlObj = createVisitedUrlModel(obj);
     user.create(usrObj, function (err, user) {
       if (err) {
         sendJsonResponse(res, 400, err);
       } else {
-        visitedUrlObj.userId = user['_id'];
-        visitedurl.create(visitedUrlObj, function (err, visitedurl) {
+        obj["userId"] = user['_id'];
+        var visitedUrl = createVisitedUrlModel(obj);
+        visitedurl.create(visitedUrl, function (err, visitedurl) {
           if (err) {
             sendJsonResponse(res, 400, err);
           } else {
@@ -25,16 +31,20 @@ module.exports.getReadTime = function (req, res) {
       }
     });
   } else {
-    visitedurl.create(obj, function (err, visitedurl) {
-      var visitedurl = visitedurl.toObject();
-      user.find({ _id: obj.userId }, 'skipPages', function (err, docs) {
-        visitedurl['skipPage'] = isSkipPage(obj.href, docs[0].skipPages);
+    user.find({
+      _id: obj.userId
+    }).lean().exec(function (err, docs) {
+      obj['isSkipPage'] = isSkipPage(obj.href, docs[0].skipPages);
+      var visitedUrl = createVisitedUrlModel(obj);
+      visitedurl.create(visitedUrl, function (err, visitedurl) {
+        // var visitedurlObj = visitedurl.toObject();
+        // console.log("VisitedURL:: "+visitedurlObj);
         if (err) {
           sendJsonResponse(res, 400, err);
         } else {
           sendJsonResponse(res, 201, visitedurl);
         }
-      });  
+      });
     });
   }
 };
@@ -59,10 +69,13 @@ module.exports.skipPage = function (req, res) {
   });
 };
 
+function getRemoteIp(req) {
+  return req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.ip;
+}
 
 function isSkipPage(currentUrl, urlArr) {
-  return urlArr.findIndex(i => i.url === currentUrl) > -1 ? true : false;  
-} 
+  return urlArr.findIndex(i => i.url === currentUrl) > -1 ? true : false;
+}
 
 var sendJsonResponse = function (res, status, content) {
   res.status(status);
@@ -74,9 +87,10 @@ function createUserModel(data) {
   var user = {
     accountType: data.accountType,
     referrer: data.referrer,
-    firstVisit: data.firstVisit,
+    // firstVisit: data.firstVisit,
     isRegistered: data.isRegistered,
-    environment: data.environment
+    environment: data.environment,
+    clientIp: data.clientIp
   }
   return user;
 }
@@ -95,7 +109,9 @@ function createVisitedUrlModel(data) {
     userId: data.userId,
     referrer: data.referrer,
     environment: data.environment,
-    articleId: data.articleId
+    clientIp: data.clientIp,
+    articleId: data.articleId,
+    skipPage: data.isSkipPage
   }
   return visited;
 }

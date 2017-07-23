@@ -1,7 +1,7 @@
 {
-    "version": "1.0.0",
+    "version": "1.0.2",
     "manifest_version": 2,
-    "description": "Readtime helps you to estimate the article reading time",
+    "description": "iReadtime helps you to estimates the article reading time",
     "default_locale": "en",
     "background": {
         "persistent": false,
@@ -11,10 +11,10 @@
             "src/bg/background.js"
         ]
     },
-    "name": "Readtime - Get reading time for any article",
+    "name": "iReadtime - Improved Reading Time Estimator",
     "browser_action": {
         "default_icon": "icons/icon19.png",
-        "default_title": "Readtime"
+        "default_title": "iReadtime - Click to estimate reading time"
     },
     "permissions": [
         "idle",
@@ -23,7 +23,7 @@
         "https://*/*"
     ],
     "omnibox": {
-        "keyword": "Readtime, Reading Time, Content Reading Time Eastimator, Glance"
+        "keyword": "iReadtime, Improved Reading Time, Content Reading Time Estimator, Glance, Reading time calculator"
     },
     "content_scripts": [{
         "matches": [

@@ -5,8 +5,8 @@
 // });
 
 /* env variables [Start] */
-// var host = 'http://localhost:3000';
-var host = 'http://clipsack.herokuapp.com'; // prodApiUrl
+var host = 'http://localhost:3000';
+// var host = 'http://clipsack.herokuapp.com'; // prodApiUrl
 /* env variables [End] */
 
 // Called when the user clicks on the browser action.
@@ -21,7 +21,6 @@ var host = 'http://clipsack.herokuapp.com'; // prodApiUrl
 //             'message': 'clicked_browser_action'
 //         });
 //         // No tabs or host permissions needed!
-
 
 
 //         bookmarks = {
@@ -134,6 +133,7 @@ chrome.runtime.onMessage.addListener(
                 request.readability.referrer = 'readtime',
                 request.readability.environment = 'testing',
                 request.readability.isRegistered = 0,
+                request.readability.isSkipPage = false,
                 request.readability.articleId = createIdUsingString(request.readability.href);
             //console.log(request);
             if (request.readability.articleId !== lastArticleId) { // Don't send history to server if last article was as the current article
@@ -187,7 +187,7 @@ chrome.runtime.onMessage.addListener(
                                 tabId: tabId,
                                 text: readtime
                             });
-                            chrome.webNavigation.onCommitted.removeListener(update);
+                            // chrome.webNavigation.onCommitted.removeListener(update);
                         }
                     });
                 }

@@ -37,7 +37,7 @@ function readingContent(location) {
             host = location.host;
         if (host.indexOf("www.") != -1)
             host = host.substring(4);
-        var stopWebsite = ['glassdoor.co.in', 'glassdoor.com'];
+        var stopWebsite = ['glassdoor.co.in', 'glassdoor.com', 'facebook.com', 'google.com', 'mail.google.com', 'mysmartprice.com', 'quora.com'];
 
         if (/blog/.test(href)) {
             return true;
@@ -328,3 +328,7 @@ chrome.runtime.sendMessage({
 }, function (response) {
     // console.log(response); // asynchronous call 
 });
+
+function forceReadTime() {
+    return;
+}

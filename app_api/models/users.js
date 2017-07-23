@@ -24,6 +24,10 @@ var userSchema = new Schema({
         type: String, // It can be used to identify data type as if production data or development data.
         required: true
     },
+    clientIp: {
+        type: String,
+        required: true
+    },
     skipPages: {
         type: Array
     }
@@ -116,7 +120,11 @@ var visitedUrlSchema = new Schema({
         required: true,
         trim: true
     },
-    isSkipPage: {
+    clientIp: {
+        type: String,
+        required: true
+    },
+    skipPage: {
         type: Boolean
     }
 });
