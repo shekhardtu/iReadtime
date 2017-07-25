@@ -2,6 +2,7 @@
   "name": "clipsack",
   "version": "1.0.0",
   "private": true,
+  "main": "./bin/www",
   "scripts": {
     "start": "node ./bin/www"
   },
@@ -9,7 +10,7 @@
     "node": "~6.11.1",
     "npm": "~4.4.4"
   },
-  "dependencies": { 
+  "dependencies": {
     "body-parser": "~1.17.1",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.3",
