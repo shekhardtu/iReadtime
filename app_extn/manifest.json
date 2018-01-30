@@ -1,5 +1,5 @@
 {
-    "version": "1.0.2",
+    "version": "1.0.5",
     "manifest_version": 2,
     "description": "iReadtime helps you to estimates the article reading time",
     "default_locale": "en",

@@ -34,7 +34,8 @@ module.exports.getReadTime = function (req, res) {
     user.find({
       _id: obj.userId
     }).lean().exec(function (err, docs) {
-      obj['isSkipPage'] = isSkipPage(obj.href, docs[0].skipPages);
+
+      obj['isSkipPage'] = docs && docs[0] && docs[0].skipPages && isSkipPage(obj.href, docs[0].skipPages);
       var visitedUrl = createVisitedUrlModel(obj);
       visitedurl.create(visitedUrl, function (err, visitedurl) {
         // var visitedurlObj = visitedurl.toObject();

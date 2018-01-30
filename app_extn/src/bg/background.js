@@ -5,8 +5,8 @@
 // });
 
 /* env variables [Start] */
-var host = 'http://localhost:3000';
-// var host = 'http://clipsack.herokuapp.com'; // prodApiUrl
+// var host = 'http://localhost:3000';
+var host = 'https://clipsack.herokuapp.com'; // prodApiUrl
 /* env variables [End] */
 
 // Called when the user clicks on the browser action.
