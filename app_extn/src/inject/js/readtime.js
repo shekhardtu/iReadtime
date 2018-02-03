@@ -19,7 +19,7 @@ $(document).ready(function () {
         readability: window.location
     }, function (response) {
         if (!response.skipPage) {
-            var readtime = getReadTimePopout(null, 275);
+            var readtime = getReadTimePopout(null, 275, false);
             if (readtime) {
                 chrome.runtime.sendMessage({
                     reqType: "iconBadge",
@@ -31,15 +31,31 @@ $(document).ready(function () {
 
 });
 
-function readingContent(location) {
+function readingContent(location, frcRead) {
     var isValid = (function () {
         var href = location.href,
             host = location.host;
         if (host.indexOf("www.") != -1)
             host = host.substring(4);
-        var stopWebsite = ['glassdoor.co.in', 'glassdoor.com', 'facebook.com', 'google.com', 'mail.google.com', 'mysmartprice.com', 'quora.com'];
+        var stopWebsite = [
+            'glassdoor.co.in',
+            'glassdoor.com',
+            'facebook.com',
+            'google.com',
+            'mail.google.com',
+            'mysmartprice.com',
+            'quora.com',
+            'flipkart.com',
+            'amazon.in',
+            'amazon.com',
+            'google.co.in',
+            'youtube.com',
+            'twitter.com'
+        ];
 
-        if (/blog/.test(href)) {
+        if (/blog/.test(href) || /notes/.test(href) || /article/.test(href)) {
+            return true;
+        } else if (frcRead === true) { // Browser action irrespective of stoplist
             return true;
         } else if (stopWebsite.indexOf(host) != -1) {
             return false;
@@ -242,16 +258,16 @@ function readtimePopout(readtime) {
     }
 }
 
-function getReadTimePopout(location, avgRdngSpd) {
+function getReadTimePopout(location, avgRdngSpd, lctnCheck) {
     if (!location) {
         var location = window.location;
     }
     var $closeSelector = $(".js-clpsck-extn__cls");
     popupCls($closeSelector, false); // @false: user action or close action
-    var readContent = readingContent(location);
-    var parsedContent = domParser(readContent);
-    var readtime = calculateReadingTime(parsedContent, avgRdngSpd);
-    readtimePopout(readtime);
+    var readContent = readingContent(location, lctnCheck);
+    var parsedContent = domParser(readContent, lctnCheck);
+    var readtime = calculateReadingTime(parsedContent, avgRdngSpd, lctnCheck);
+    readtimePopout(readtime, lctnCheck);
     return readtime;
 }
 
@@ -275,7 +291,7 @@ function removeReadtimePopup(selector, timerEnabled) {
                 }, function (response) {
                     if (!response.skipPage) {
 
-                        var readtime = getReadTimePopout(null, 275);
+                        var readtime = getReadTimePopout(null, 275, false);
                         if (readtime) {
                             chrome.runtime.sendMessage({
                                 reqType: "iconBadge",
@@ -332,3 +348,16 @@ chrome.runtime.sendMessage({
 function forceReadTime() {
     return;
 }
+
+// Listen for messages
+chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
+    if (msg.text === 'reqReadtime') {
+        var readtime = getReadTimePopout(null, 275, true);
+        if (readtime) {
+            chrome.runtime.sendMessage({
+                reqType: "iconBadge",
+                readtime: readtime
+            }, function () {});
+        }
+    }
+});

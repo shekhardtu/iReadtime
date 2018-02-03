@@ -1,5 +1,7 @@
 {
-    "version": "1.0.5",
+"update_url": "https://clients2.google.com/service/update2/crx",
+
+    "version": "1.0.4",
     "manifest_version": 2,
     "description": "iReadtime helps you to estimates the article reading time",
     "default_locale": "en",
@@ -11,7 +13,7 @@
             "src/bg/background.js"
         ]
     },
-    "name": "iReadtime - Improved Reading Time Estimator",
+    "name": "iReadtime - Reading Time Estimator",
     "browser_action": {
         "default_icon": "icons/icon19.png",
         "default_title": "iReadtime - Click to estimate reading time"
@@ -23,7 +25,7 @@
         "https://*/*"
     ],
     "omnibox": {
-        "keyword": "iReadtime, Improved Reading Time, Content Reading Time Estimator, Glance, Reading time calculator"
+        "keyword": "iReadtime, Reading Time, Content Reading Time Estimator, Glance, Reading time calculator"
     },
     "content_scripts": [{
         "matches": [
