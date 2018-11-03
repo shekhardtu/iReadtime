@@ -1,4 +1,4 @@
-# clipsack
+# iReadtime
 A chrome extension to organize your reading list. 
 Primarily design to give the best ever reading experiance on internet. 
 Help you to make bookmark,highlight and get the personalized reading time. 
